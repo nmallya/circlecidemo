@@ -125,6 +125,7 @@ workflows:
             branches:
               only:
                 - develop
+                - master
       - push-dev-server:
           requires:
             - build
@@ -132,6 +133,7 @@ workflows:
             branches:
               only:
                 - develop
+                - master
       - deploy-dev-server:
           requires:
             - push-dev-server
@@ -139,27 +141,28 @@ workflows:
             branches:
               only:
                 - develop
+                - master
   staging_deploy:
     jobs:
       - build:
           filters:
             branches:
               only:
-                - master
+                - master2
       - push-staging-server:
           requires:
             - build
           filters:
             branches:
               only:
-                - master
+                - master2
       - deploy-staging-server:
           requires:
             - push-staging-server
           filters:
             branches:
               only:
-                - master
+                - master2
 
   smoketest_deploy:
     jobs:
