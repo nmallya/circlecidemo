@@ -3,7 +3,7 @@ jobs:
   build:
     # environment:
     #   DEBIAN_FRONTEND: noninteractive
-    working_directory: ~/../helloworld
+    working_directory: ~/nodeapp/helloworld
     docker:
       - image: circleci/ruby:2.4.1-node-browsers
     steps:
