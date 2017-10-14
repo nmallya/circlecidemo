@@ -1,11 +1,11 @@
 version: 2
 jobs:
   build:
-    working_directory: ~/helloworld
+    # working_directory: ~/helloworld
     docker:
       - image: circleci/ruby:2.4.1-node
-        environment:
-          RAILS_ENV: test
+        # environment:
+        #   RAILS_ENV: test
     steps:
       - checkout
 
