@@ -1,9 +1,9 @@
 version: 2
 jobs:
   build:
-    environment:
-      DEBIAN_FRONTEND: noninteractive
-    working_directory: ~/helloworld
+    # environment:
+    #   DEBIAN_FRONTEND: noninteractive
+    working_directory: helloworld
     docker:
       - image: circleci/ruby:2.4.1-node-browsers
     steps:
