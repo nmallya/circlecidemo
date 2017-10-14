@@ -1,8 +1,8 @@
 FROM ruby:2.4-slim
 
 ENV BUILD_PACKAGES="build-essential" \
-    DEV_PACKAGES="libpq-dev git libxrender1 libfontconfig" \
-    APP_HOME="/var/www/helloworld" \
+    DEV_PACKAGES="libpq-dev libmysqlclient-dev git libxrender1 libfontconfig" \
+    APP_HOME="/var/www/sema4sso" \
 RUN \
 
   # linux packages
@@ -25,12 +25,11 @@ ADD . $APP_HOME
 
 
 # compile assets!
-#RUN bundle exec rake assets:precompile
-
+#UN bundle exec rake assets:precompile
 
 # expose app server
 EXPOSE 3000
-ADD docker/usr/bin/ /usr/bin/
+#ADD docker/usr/bin/ /usr/bin/
 
 # ENTRYPOINT ["/usr/bin/init_gcloud_rails_app.sh"]
 CMD bundle exec rails server -b 0.0.0.0 -p 3000
