@@ -21,6 +21,7 @@ jobs:
           key: helloworld-{{ checksum "Gemfile.lock" }}
           paths:
             - vendor/bundle
+      - run: bundle exec rspec
 
 
   # push to Google Container Registry (GCR)
