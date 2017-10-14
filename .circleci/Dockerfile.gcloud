@@ -1,14 +1,8 @@
 FROM ruby:2.4-slim
 
 ENV BUILD_PACKAGES="build-essential" \
-    DEV_PACKAGES="libpq-dev libmysqlclient-dev git libxrender1 libfontconfig" \
-    APP_HOME="/var/www/sema4sso" \
-    WEB_START_COMMAND="bundle exec rails server -b 0.0.0.0 -p 3000" \
-    WORKER_START_COMMAND="bundle exec rake run_worker" \
-    PHOENIX_LISTENER_START_COMMAND="bundle exec rake run_phoenix_listener" \
-    DB_MIGRATE_SEED_COMMAND="bundle exec rake run_db_migrate_seed" \
-    RAILS_ENV="qa"
-
+    DEV_PACKAGES="libpq-dev git libxrender1 libfontconfig" \
+    APP_HOME="/var/www/helloworld" \
 RUN \
 
   # linux packages
@@ -31,7 +25,7 @@ ADD . $APP_HOME
 
 
 # compile assets!
-RUN bundle exec rake assets:precompile
+#RUN bundle exec rake assets:precompile
 
 
 # expose app server
@@ -39,4 +33,4 @@ EXPOSE 3000
 ADD docker/usr/bin/ /usr/bin/
 
 # ENTRYPOINT ["/usr/bin/init_gcloud_rails_app.sh"]
-CMD bundle exec foreman start --formation "$FORMATION"
+CMD bundle exec rails server -b 0.0.0.0 -p 3000
