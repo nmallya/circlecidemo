@@ -7,20 +7,21 @@ jobs:
       - image: circleci/ruby:2.4.1-node-browsers
     steps:
       - checkout
+      - run: bundle install --path vendor/bundle
       # Download and cache dependencies
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-      - run:
-          name: install dependencies
-          command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+      # - restore_cache:
+      #     keys:
+      #     - v1-dependencies-{{ checksum "Gemfile.lock" }}
+      #     # fallback to using the latest cache if no exact match is found
+      #     - v1-dependencies-
+      # - run:
+      #     name: install dependencies
+      #     command: |
+      #       bundle install --jobs=4 --retry=3 --path vendor/bundle
+      # - save_cache:
+      #     paths:
+      #       - ./vendor/bundle
+      #     key: v1-dependencies-{{ checksum "Gemfile.lock" }}
       # - run: bundle exec rspec
     parallelism: 1
 
