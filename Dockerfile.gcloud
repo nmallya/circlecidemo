@@ -2,7 +2,7 @@ FROM ruby:2.4-slim
 
 ENV BUILD_PACKAGES="build-essential" \
     DEV_PACKAGES="libpq-dev libmysqlclient-dev git libxrender1 libfontconfig" \
-    APP_HOME="/var/www/sema4sso" \
+    APP_HOME="/var/www/helloworld" 
 RUN \
 
   # linux packages
