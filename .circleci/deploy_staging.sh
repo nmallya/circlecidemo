@@ -2,7 +2,7 @@
 echo ${GOOGLE_AUTH} | base64 -d > ${HOME}/gcp-key.json
 gcloud auth activate-service-account --key-file ${HOME}/gcp-key.json
 gcloud config set project circle-agent
-gcloud container clusters get-credentials circleciqacluster --zone us-central1-a --project circle-agent
+gcloud container clusters get-credentials circlecistagingcluster --zone us-central1-a --project circle-agent
 
 
 echo 'Updating web deployment image'

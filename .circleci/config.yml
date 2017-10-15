@@ -21,15 +21,10 @@ jobs:
           paths:
             - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-      # - run: chmod +x ./.circleci/run_tests.sh
-      # - run: ./.circleci/run_tests.sh
-
-      # - run: bundle exec rake db:create db:migrate db:seed
-      # - run: bundle exec rspec
     parallelism: 1
 
   # push to Google Container Registry (GCR)
-  push-qa-server:
+  deploy-qa-server:
     docker:
       - image: turbinelabs/gcloud-build:0.12.4
     requires:
@@ -43,9 +38,25 @@ jobs:
       - run: docker build -t helloworldapp -f ./Dockerfile.gcloud .
       - run: docker tag helloworldapp gcr.io/circle-agent/helloworldapp:$CIRCLE_SHA1
       - run: gcloud docker -- push gcr.io/circle-agent/helloworldapp:$CIRCLE_SHA1
-      - run: chmod +x ./.circleci/deploy_qa.sh
-      - run: ./.circleci/deploy_qa.sh
+      # - run: chmod +x ./.circleci/deploy_qa.sh
+      # - run: ./.circleci/deploy_qa.sh
 
+  deploy-staging-server:
+    docker:
+      - image: turbinelabs/gcloud-build:0.12.4
+    requires:
+      - build
+    environment:
+      DEBIAN_FRONTEND: noninteractive
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run: openrc boot
+      - run: docker build -t helloworldapp -f ./Dockerfile.gcloud .
+      - run: docker tag helloworldapp gcr.io/circle-agent/helloworldapp:$CIRCLE_SHA1
+      - run: gcloud docker -- push gcr.io/circle-agent/helloworldapp:$CIRCLE_SHA1
+      # - run: chmod +x ./.circleci/deploy_staging.sh
+      # - run: ./.circleci/deploy_stagin.sh
 
   # # Deploy to GKE
   # deploy-qa-server:
