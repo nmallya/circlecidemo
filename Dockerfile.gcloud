@@ -1,36 +1,31 @@
 FROM ruby:2.4-slim
 
-ENV BUILD_PACKAGES="build-essential" \
-    DEV_PACKAGES="libpq-dev libmysqlclient-dev git libxrender1 libfontconfig" \
-    APP_HOME="/var/www/helloworld"
-
-RUN \
-
-  # linux packages
-  apt-get update -qq && apt-get install -y $BUILD_PACKAGES $DEV_PACKAGES && \
-
-  # app directory
-  mkdir -p $APP_HOME && \
-
-  # gem update
-  gem update --system && \
-
-  # bundler
-  gem install -N bundler
-
-# gems link
+# set some rails env vars
+ENV BUNDLE_PATH /bundle
+# set the app directory var
+ENV APP_HOME /home/app
 WORKDIR $APP_HOME
-ADD ./Gemfile* $APP_HOME/
-RUN bundle install --jobs 20 --retry 3
-ADD . $APP_HOME
 
+RUN apt-get update -qq
+# Install apt dependencies
+RUN apt-get install -y nodejs
 
-# compile assets!
-#RUN bundle exec rake assets:precompile
+RUN apt-get install -y --no-install-recommends \
+  build-essential \
+  curl libssl-dev \
+  git \
+  unzip \
+  zlib1g-dev \
+  libxslt-dev \
+  libsqlite3-dev \
+  mysql-client \
+  libmysqlclient-dev \
+  sqlite3
+# install bundler
+RUN gem install bundler
+COPY Gemfile* ./
+RUN bundle install
+ADD . .
 
-# expose app server
 EXPOSE 3000
-#ADD docker/usr/bin/ /usr/bin/
-
-# ENTRYPOINT ["/usr/bin/init_gcloud_rails_app.sh"]
-CMD bundle exec rails server -b 0.0.0.0 -p 3000
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]
