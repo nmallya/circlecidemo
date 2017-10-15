@@ -21,15 +21,12 @@ jobs:
           paths:
             - ./vendor/bundle
           key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-      # - run: chmod +x ./.circleci/run_tests.sh
-      # - run: ./.circleci/run_tests.sh
-
-      # - run: bundle exec rake db:create db:migrate db:seed
-      # - run: bundle exec rspec
     parallelism: 1
 
   # push to Google Container Registry (GCR)
   push-qa-server:
+    requires:
+      - build
     docker:
       - image: turbinelabs/gcloud-build:0.12.4
     environment:
@@ -44,6 +41,8 @@ jobs:
 
   # Deploy to GKE
   deploy-qa-server:
+    requires:
+      - build
     docker:
       - image: turbinelabs/gcloud-build:0.12.4
     steps:
@@ -54,33 +53,33 @@ jobs:
       - run: ./.circleci/deploy_qa.sh
 
 
-workflows:
-  version: 2
-  build:
-    jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - master
-  qa_deploy:
-    jobs:
-      - build:
-          filters:
-            branches:
-              only:
-                - master
-      - push-qa-server:
-          requires:
-            - build
-          filters:
-            branches:
-              only:
-                - master
-      - deploy-qa-server:
-          requires:
-            - push-qa-server
-          filters:
-            branches:
-              only:
-                - master
+# workflows:
+#   version: 2
+#   build:
+#     jobs:
+#       - build:
+#           filters:
+#             branches:
+#               only:
+#                 - master
+#   qa_deploy:
+#     jobs:
+#       - build:
+#           filters:
+#             branches:
+#               only:
+#                 - master
+#       - push-qa-server:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only:
+#                 - master
+#       - deploy-qa-server:
+#           requires:
+#             - push-qa-server
+#           filters:
+#             branches:
+#               only:
+#                 - master
