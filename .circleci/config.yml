@@ -48,7 +48,6 @@ jobs:
       - image: turbinelabs/gcloud-build:0.12.4
     steps:
       - checkout
-      - build
       - push-qa-server
       - run: openrc boot
       - run: chmod +x ./.circleci/deploy_qa.sh
@@ -57,13 +56,13 @@ jobs:
 
 workflows:
   version: 2
-  # build:
-  #   jobs:
-  #     - build:
-  #         filters:
-  #           branches:
-  #             only:
-  #               - master
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - master
   qa_deploy:
     jobs:
       - build:
