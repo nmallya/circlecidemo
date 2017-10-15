@@ -29,7 +29,7 @@ jobs:
     parallelism: 2
 
   # push to Google Container Registry (GCR)
-  push-dev-server:
+  push-qa-server:
     docker:
       - image: turbinelabs/gcloud-build:0.12.4
     environment:
@@ -43,7 +43,7 @@ jobs:
       - run: gcloud docker -- push gcr.io/circle-agent/helloworldapp:$CIRCLE_SHA1
 
   # Deploy to GKE
-  deploy-dev-server:
+  deploy-qa-server:
     docker:
       - image: turbinelabs/gcloud-build:0.12.4
     steps:
@@ -62,23 +62,23 @@ workflows:
   #           branches:
   #             only:
   #               - master
-  dev_deploy:
+  qa_deploy:
     jobs:
       - build:
           filters:
             branches:
               only:
                 - master
-      - push-dev-server:
+      - push-qa-server:
           requires:
             - build
           filters:
             branches:
               only:
                 - master
-      - deploy-dev-server:
+      - deploy-qa-server:
           requires:
-            - push-dev-server
+            - push-qa-server
           filters:
             branches:
               only:
