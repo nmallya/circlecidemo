@@ -3,11 +3,11 @@ FROM ruby:2.4-slim
 ENV BUILD_PACKAGES="build-essential" \
     DEV_PACKAGES="libpq-dev libmysqlclient-dev git libxrender1 libfontconfig" \
     APP_HOME="/var/www/helloworld"
+
 RUN \
 
   # linux packages
-  apt-get update -qq && apt-get install -y build-essential libpq-dev git nodejs && \
-  #$BUILD_PACKAGES $DEV_PACKAGES && \
+  apt-get update -qq && apt-get install -y $BUILD_PACKAGES $DEV_PACKAGES && \
 
   # app directory
   mkdir -p $APP_HOME && \
@@ -26,7 +26,7 @@ ADD . $APP_HOME
 
 
 # compile assets!
-#UN bundle exec rake assets:precompile
+#RUN bundle exec rake assets:precompile
 
 # expose app server
 EXPOSE 3000
