@@ -42,12 +42,11 @@ jobs:
   # Deploy to GKE
   deploy-qa-server:
     requires:
-      - build
+      - push-qa-server
     docker:
       - image: turbinelabs/gcloud-build:0.12.4
     steps:
       - checkout
-      - push-qa-server
       - run: openrc boot
       - run: chmod +x ./.circleci/deploy_qa.sh
       - run: ./.circleci/deploy_qa.sh
