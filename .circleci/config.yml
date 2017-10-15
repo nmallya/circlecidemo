@@ -49,8 +49,8 @@ jobs:
     steps:
       - checkout
       - run: openrc boot
-      # - run: chmod +x ./.circleci/deploy_qa.sh
-      # - run: ./.circleci/deploy_qa.sh
+      - run: chmod +x ./.circleci/deploy_qa.sh
+      - run: ./.circleci/deploy_qa.sh
 
 
 workflows:
