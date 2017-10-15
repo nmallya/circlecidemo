@@ -1,0 +1,94 @@
+version: 2
+jobs:
+  deploy-qa-server:
+    environment:
+      DEBIAN_FRONTEND: noninteractive
+    docker:
+      - image: circleci/ruby:2.4.1-node-browsers
+      - image: turbinelabs/gcloud-build:0.12.4
+
+    steps:
+      - checkout
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+      - run:
+          name: install dependencies
+          command: |
+            bundle install --jobs=4 --retry=3 --path vendor/bundle
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+      - setup_remote_docker
+      - run: openrc boot
+      - run: docker build -t helloworldapp -f ./Dockerfile.gcloud .
+      - run: docker tag helloworldapp gcr.io/circle-agent/helloworldapp:$CIRCLE_SHA1
+      - run: gcloud docker -- push gcr.io/circle-agent/helloworldapp:$CIRCLE_SHA1
+      - run: chmod +x ./.circleci/deploy_qa.sh
+      - run: ./.circleci/deploy_qa.sh
+
+    parallelism: 1
+
+  # # push to Google Container Registry (GCR)
+  # push-qa-server:
+  #   requires:
+  #     - build
+  #   docker:
+  #     - image: turbinelabs/gcloud-build:0.12.4
+  #   environment:
+  #     DEBIAN_FRONTEND: noninteractive
+  #   steps:
+  #     - checkout
+  #     - setup_remote_docker
+  #     - run: openrc boot
+  #     - run: docker build -t helloworldapp -f ./Dockerfile.gcloud .
+  #     - run: docker tag helloworldapp gcr.io/circle-agent/helloworldapp:$CIRCLE_SHA1
+  #     - run: gcloud docker -- push gcr.io/circle-agent/helloworldapp:$CIRCLE_SHA1
+  #
+  # # Deploy to GKE
+  # deploy-qa-server:
+  #   requires:
+  #     - push-qa-server
+  #   docker:
+  #     - image: turbinelabs/gcloud-build:0.12.4
+  #   steps:
+  #     - checkout
+  #     - run: openrc boot
+  #     - run: chmod +x ./.circleci/deploy_qa.sh
+  #     - run: ./.circleci/deploy_qa.sh
+
+
+# workflows:
+#   version: 2
+#   build:
+#     jobs:
+#       - build:
+#           filters:
+#             branches:
+#               only:
+#                 - master
+#   qa_deploy:
+#     jobs:
+#       - build:
+#           filters:
+#             branches:
+#               only:
+#                 - master
+#       - push-qa-server:
+#           requires:
+#             - build
+#           filters:
+#             branches:
+#               only:
+#                 - master
+#       - deploy-qa-server:
+#           requires:
+#             - push-qa-server
+#           filters:
+#             branches:
+#               only:
+#                 - master
