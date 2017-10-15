@@ -8,7 +8,8 @@ echo 'kubectl config view'
 kubectl config view
 
 echo 'kubectl proxy '
-kubectl proxy --port=8080 &
+kubectl proxy --address 0.0.0.0 --accept-hosts '.*' &
+
 
 echo 'curling now...'
-curl http://localhost:8080/api/v1
+curl http://localhost:8001/api/v1
