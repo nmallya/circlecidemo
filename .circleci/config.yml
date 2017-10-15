@@ -26,12 +26,14 @@ jobs:
 
       # - run: bundle exec rake db:create db:migrate db:seed
       # - run: bundle exec rspec
-    parallelism: 2
+    parallelism: 1
 
   # push to Google Container Registry (GCR)
   push-qa-server:
     docker:
       - image: turbinelabs/gcloud-build:0.12.4
+    requires:
+      - build
     environment:
       DEBIAN_FRONTEND: noninteractive
     steps:
@@ -46,6 +48,8 @@ jobs:
   deploy-qa-server:
     docker:
       - image: turbinelabs/gcloud-build:0.12.4
+    requires:
+      - push-qa-server
     steps:
       - checkout
       - run: openrc boot
@@ -55,13 +59,13 @@ jobs:
 
 workflows:
   version: 2
-  # build:
-  #   jobs:
-  #     - build:
-  #         filters:
-  #           branches:
-  #             only:
-  #               - master
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - master
   qa_deploy:
     jobs:
       - build:
