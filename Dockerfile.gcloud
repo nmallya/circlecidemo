@@ -6,7 +6,7 @@ ENV BUILD_PACKAGES="build-essential" \
 RUN \
 
   # linux packages
-  apt-get update -qq && apt-get install -y build-essential libpq-dev git
+  apt-get update -qq && apt-get install -y build-essential libpq-dev git libxrender1 libfontconfig && \
   #$BUILD_PACKAGES $DEV_PACKAGES && \
 
   # app directory
